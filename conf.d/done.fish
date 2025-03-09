@@ -24,7 +24,7 @@ if not status is-interactive
     exit
 end
 
-set -g __done_version 1.19.3
+set -g __done_version 1.19.4
 
 function __done_run_powershell_script
     set -l powershell_exe (command --search "powershell.exe")
@@ -255,6 +255,11 @@ if set -q __done_enabled
             else if set -q KITTY_WINDOW_ID
                 printf "\x1b]99;i=done:d=0;$title\x1b\\"
                 printf "\x1b]99;i=done:d=1:p=body;$message\x1b\\"
+            else if set -q GHOSTTY_RESOURCES_DIR
+                echo -e "\033]777;notify;$title;$message\007"
+                if test "$__done_notify_sound" -eq 1
+                    echo -e "\a" # bell sound
+                end
             else if type -q terminal-notifier # https://github.com/julienXX/terminal-notifier
                 if test "$__done_notify_sound" -eq 1
                     # pipe message into terminal-notifier to avoid escaping issues (https://github.com/julienXX/terminal-notifier/issues/134). fixes #140
